@@ -35,6 +35,8 @@ from sklearn.metrics import confusion_matrix
 # %% Project introduction
 st.title("Credit Risk Data \n - Alex HOC and Chunyan JI - M2 IRFA \n - Date: Jan.05, 2024")
 
+st.write('Program is running. It might take some time to load the program. Please give me some time.')
+
 # 1: Introduction of the Topic
 st.markdown("## 1: Introduction of the Topic")
 st.write("Credit scoring is a crucial aspect of evaluating a bank's customer creditworthiness, assessing their ability and willingness to repay debts. Given that less than half of the banked population is deemed eligible for lending, the demand for more sophisticated credit scoring solutions is evident.")
@@ -195,7 +197,7 @@ df_clean = df.dropna(subset=['installment', 'month_inc'])
 pearson_coef, p_value = pearsonr(df_clean['installment'], df_clean['month_inc'])
 st.write(f"Pearson Correlation Coefficient: {pearson_coef}")
 st.write(f"P-Value: {p_value}")
-st.write('''p value is < 0.01), it is assumed that monthly loan payment has positive correlation (coefficient > 0) with montly income. 
+st.write('''p value is < 0.01, it is assumed that monthly loan payment has positive correlation (coefficient > 0) with montly income. 
         However, there are some outliers. Some borrowers' monthly loan payment is higher than monthly income''')
          
 fig = plt.figure(figsize=(10, 6))
@@ -302,6 +304,8 @@ y_train = y_train.astype(int)
 
 # %% 
 # -------------------- Random Forest ----------------
+st.write('To note: the exact model accuracy could change based on the choice.')
+
 st.markdown("""
 # Ensemble Learners
 In this section, you will compare two ensemble algorithms to determine which algorithm results in the best performance. You will train a Balanced Random Forest Classifier and an Easy Ensemble AdaBoost classifier. For each algorithm, be sure to complete the following steps:
@@ -381,6 +385,8 @@ st.write(f"Balanced Accuracy Score: {balanced_acc_score}")
 confusion_matrix(y_test, predictions)
 st.write("Display the confusion matrix" )
 st.write(confusion_matrix(y_test, predictions))
+st.write('The Balanced Random Forest Classifier exhibits modest(about 50 % - 60%) accuracy in predicting the majority class{Current}. However, its performance is less robust in identifying instances of minority classes, such as {In Grace Period} and {Late (31-120 days)}, where precision, recall, and F1-scores are notably lower. The model\'s challenge in capturing instances of the minority classes may necessitate further adjustments or tuning to enhance its predictive capabilities. Considering the class imbalance, particularly the substantial number of instances in the {Current} class, understanding the implications of false positives and false negatives is vital in the context of risk management and lending decisions.')
+
 # %%
 # Print the imbalanced classification report
 from imblearn.metrics import classification_report_imbalanced
@@ -392,7 +398,6 @@ report_df = pd.DataFrame(report_dict)
 # Display the DataFrame using st.table
 st.table(report_df)
 
-st.write('The Balanced Random Forest Classifier exhibits strong accuracy in predicting the majority class, {Current}, with high precision (1.00); however, its performance is less robust in identifying instances of minority classes, such as {In Grace Period} and {Late (31-120 days)}, where precision, recall, and F1-scores are notably lower. The model\'s challenge in capturing instances of the minority classes may necessitate further adjustments or tuning to enhance its predictive capabilities. Considering the class imbalance, particularly the substantial number of instances in the {Current} class (1159), a comprehensive evaluation using macro and weighted averages provides insights into overall model performance. Understanding the implications of false positives and false negatives is vital in the context of risk management and lending decisions, prompting a thoughtful consideration of potential refinements and ongoing monitoring to adapt to changing business conditions.')
 # %% 
 # --------------------------------Zero-Inflated Poisson model-------------------------------- 
 
@@ -433,8 +438,7 @@ plt.ylabel('Actual label')
 plt.xlabel('Predicted Loan Status')
 st.pyplot(fig)
 
-
-st.write(' Some current borrowers were classified as $hig risk$. It could be true considering their debt ratio, monthly income, and installment,etc.. More attention should be paid to those borrowers.')
+st.write(' Notes: A small portion(about 5% when I run the model) of current(low risk) borrowers were classified as high risk by logistic regression. Could we consider it as misclaffication? Maybe not. Because in our data, we noticed that a portion of borrowers who paid their debt due by the data collection time. However, considering some have high debt ratio, high installment, interest rate...conditions, there is a increasing possibilty of default. It is important to consider their debt ratio, monthly income, and installment,etc.. More attention should be paid to those borrowers.')
 st.write('Accuracy of logistic regression classifier on test set: {:.2f}.format(logreg.score(X_test, y_test))')
 
 coefficients = logreg.coef_[0]
@@ -465,15 +469,15 @@ st.pyplot(fig)
 y_pred = clf.predict(X_test)
 st.text('How accurate is the decsision classifier ?')
 st.write("Accuracy:",metrics.accuracy_score(y_test, y_pred))
-st.write('However, the decision tree method could cause overfitting.')
+st.write('Decision has hight accuracy. However, the decision tree method could cause overfitting. Besides, the interpretation of the model output could also a challeng to business.')
 
 st.title("Compare the models")
-st.write('To note: the exact model accuracy could change based on the choice. But we believe that there would not very big changes of our conclusion.')
-st.write('Both Decision Tree Test and Logistic regression have high accuracy in this project. However,the decision tree could cause overfitting problem, while the logistic regression did not present the high risk (low frequency) data. Balanced Random Forest Classifier could have high accuracy and might be biased towards the majority class, leading to high accuracy while poorly predicting the minority class.  Zero-Inflated Poisson model is not applicable in our case. We might also consider other models for count data, such as the Negative Binomial regression. Negative Binomial models are more flexible than Poisson models and can handle overdispersion. ')
-
+st.write('Both Decision Tree Test and Logistic regression have high accuracy in this project. However,the decision tree could cause overfitting problem, while the logistic regression could be impacted by (low frequency class) data. Balanced Random Forest Classifier could have high accuracy and might be biased towards the majority class, leading to high accuracy while poorly predicting the minority class.  Zero-Inflated Poisson model is not applicable in our case. We might also consider other models for count data, such as the Negative Binomial regression. Negative Binomial models are more flexible than Poisson models and can handle overdispersion. ')
+st.write('Based on the results above, logistic regression model has adavantages in interpretation, computation efficiency, and high accuracy. But we could improve the model by reducing varaibles (collilarity) and imputing missing values. We could also combine the Random forest modela and logistic regression model. First, we use the random forest model to select important varaibles, and then run the logistic regression model. It is not sure if it is a reasonable way to do it. More rigurous methods should apply in future research.')
 
 # %%%%  discuss the results from the business point view (answer the problematic) 
 st.title("Discuss the results from the business point view")
 st.write("In our credit risk analysis project, we used variables influencing credit risk for informed decision-making. We start by visualizing the distribution of each variable and their relationships with 'loan_status.' It provides initial insights into potential risk factors. Next, we calculate correlations between independent variables and the target variable, 'loan_status,' revealing variables with significant linear relationships impacting credit risk. To assess the importance of each variable in predicting credit risk, we used machine learning models like decision trees, random forests, and logistic regression. Feature importance scores generated by these models highlight the variables contributing the most to our predictive capabilities. In the context of decision trees, we measure information gain to identify variables effectively splitting the data based on 'loan_status.' Additionally, mutual information provides insights into the dependence between variables and credit risk, enhancing our understanding of complex relationships. To go further, we can employ techniques to remove less important variables to observe their impact on model performance. This refinement enhances the efficiency and accuracy of our credit risk assessment model. In summary, our credit risk analysis project provides us with a certain degree of understanding of variable importance in assessing and mitigating credit risk.")
-st.write('We learned from the logistic regression model that $dti$(debt to income ratio %) is an important indicator of credit risk. There is a great proportion of "Current" borrows has very high debt ratio > 1. We should keep an eye on it.')
-st.write('In view of the confusion matrix, the model incorrectly classifies some borrowers as low risk when they are actually high risk. This incidence can lead to significant consequences for the credit activity of a financial institution. Indeed, assuming that a certain percentage of these 1372 borrowers eventually default, the institution could face significant losses that could have unfortunately been avoided.Furthermore, the fact that there is a high proportion of false positives (25) means that the model classifies many borrowers as high risk when they actually have low risk. This can result in the rejection of many creditworthy borrowers, causing a loss of revenue opportunity and a decrease in the client portfolio\'s growth. If a client with low risk is perceived as having high risk by an institution, they may not hesitate to turn to the competition. Moreover, indirectly, this can deteriorate the client relationship with a higher number of dissatisfied clients that could harm the credit institution\'s reputation and customer loyalty. In a different context, a model that misclassifies high-risk clients without solid and viable justification can be problematic legally when considering that these classification errors can lead to risks of discrimination or even sanctions or litigation (especially when clients feel unfairly rejected).However, it is noticeable that the majority of borrowers (15746) have been correctly classified as low risk. This implies that this Random Forest model is relatively reliable for identifying safe borrowers (i.e., low risk). This reinforces confidence in loan approval decisions and contributes to the stability and profitability of the lending business, minimizing the risk of client default.In summary, although the model is effective in identifying low-risk borrowers, it remains a model that needs improvement to minimize the number of false negatives, which poses a very high risk of potential loss for the financial institution, and to better identify high-risk borrowers. It is also necessary to minimize classification errors that can have significant financial implications for the institution\'s credit activity.')
+st.write('The important variables for credit risk analysis are : monthly income, interest rate, loan amount, installment(monthly debt payment),  current bank account, debt to income ration, employee title. Those variables abouve are important indicators of credit risk. Company could collect more accurate data about those parameters.')
+st.write('There is a great proportion of "Current" borrows has very high debt ratio > 1. We should keep an eye on it.')
+st.write('In view of the confusion matrix, the model incorrectly classifies some borrowers as high risk when they are actually low risk. This incidence can lead to significant consequences for the credit activity of a financial institution. Indeed, assuming that a certain percentage of these borrowers eventually default, the institution could face significant losses that could have unfortunately been avoided.Furthermore, the fact that there is a high proportion of false positives means that the model classifies many borrowers as high risk when they actually have low risk. This can result in the rejection of many creditworthy borrowers, causing a loss of revenue opportunity and a decrease in the client portfolio\'s growth. If a client with low risk is perceived as having high risk by an institution, they may not hesitate to turn to the competition. Moreover, indirectly, this can deteriorate the client relationship with a higher number of dissatisfied clients that could harm the credit institution\'s reputation and customer loyalty. In a different context, a model that misclassifies high-risk clients without solid and viable justification can be problematic legally when considering that these classification errors can lead to risks of discrimination or even sanctions or litigation (especially when clients feel unfairly rejected).However, it is noticeable that the majority of borrowers (15746) have been correctly classified as low risk. This implies that this Random Forest model is relatively reliable for identifying safe borrowers (i.e., low risk). This reinforces confidence in loan approval decisions and contributes to the stability and profitability of the lending business, minimizing the risk of client default.In summary, although the model is effective in identifying low-risk borrowers, it remains a model that needs improvement to minimize the number of false negatives, which poses a very high risk of potential loss for the financial institution, and to better identify high-risk borrowers. It is also necessary to minimize classification errors that can have significant financial implications for the institution\'s credit activity.')
