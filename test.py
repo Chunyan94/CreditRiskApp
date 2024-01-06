@@ -183,7 +183,7 @@ def data_plot():
     st.pyplot(fig)
 
 data_plot()
-st.write("We noticed there are many outliers in the "Current" (someone who has settled all debts and/or fees due) categories, the monthly loan payment has big variation. We need to check if it is a crucial information")
+st.write("We noticed there are many outliers in the Current (someone who has settled all debts and/or fees due) categories, the monthly loan payment has big variation. We need to check if it is a crucial information")
 
 # %%
 #   Monthly debt to pay (installment) and Monthly Income
