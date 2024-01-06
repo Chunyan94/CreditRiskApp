@@ -8,3 +8,4 @@ markdown-it-py==3.0.0
 patsy==0.5.3
 seaborn==0.11.1
 streamlit-kickoff-cli==0.1.1
+statsmodels
