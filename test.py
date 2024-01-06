@@ -141,7 +141,7 @@ st.write(df.describe())
 st.markdown('## Dependent variable "y": loan statuses')
 st.text('''
         The severity of post-issurance loan statuses, in ascending order of seriousness, is as follows:
-            1. **Current**: Your payments are up to date.
+            1. **Current**: someone who has settled all debts and/or fees due
             2. **In Grace Period**: Payments are overdue but within a 15-day grace period.
             3. **Late (16-30)**: Payments are 16-30 days overdue, the first stage of delinquency.
             4. **Late (31–120)**: Payments are 31–120 days overdue, the second stage of delinquency.
@@ -183,18 +183,21 @@ def data_plot():
     st.pyplot(fig)
 
 data_plot()
+st.write("We noticed there are many outliers in the "Current" (someone who has settled all debts and/or fees due) categories, the monthly loan payment has big variation. We need to check if it is a crucial information")
 
 # %%
-#  Loan Amount vs Annual Income
+#   Monthly debt to pay (installment) and Monthly Income
 from scipy.stats import pearsonr
-st.markdown("Installment vs Monthly Income")
+st.markdown("Installment(Monthly debt to pay) vs Monthly Income")
 df_clean = df.dropna(subset=['installment', 'month_inc'])
 
 # Calculate Pearson correlation
 pearson_coef, p_value = pearsonr(df_clean['installment'], df_clean['month_inc'])
 st.write(f"Pearson Correlation Coefficient: {pearson_coef}")
 st.write(f"P-Value: {p_value}")
-
+st.write('''p value is < 0.01), it is assumed that monthly loan payment has positive correlation (coefficient > 0) with montly income. 
+        However, there are some outliers. Some borrowers' monthly loan payment is higher than monthly income''')
+         
 fig = plt.figure(figsize=(10, 6))
 sns.scatterplot(data=df_clean, x='month_inc', y='installment', palette="magma", hue='loan_amnt')
 plt.title(f"Pearson Correlation: {pearson_coef:.2f}", fontweight='bold')
